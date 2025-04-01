@@ -4,7 +4,7 @@ const createStore = redux.createStore;
 const WITHDRAW_MONEY = "WITHDRAW_MONEY";
 const DEPOSIT_MONEY = "DEPOSIT_MONEY";
 
-
+//testing
 function withdraw(){
     return {
         type: WITHDRAW_MONEY,
