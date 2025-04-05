@@ -1,10 +1,15 @@
 const redux = require('redux');
 const createStore = redux.createStore;
+const combineReducers = redux.combineReducers;
+const applyMiddleware = redux.applyMiddleware;
+const reduxLogger = require('redux-logger');
+const logger = reduxLogger.createLogger();
 const immer = require('immer');
 const produce = immer.produce
 const WITHDRAW_MONEY = "WITHDRAW_MONEY";
 const DEPOSIT_MONEY = "DEPOSIT_MONEY";
-
+const OPEN_ACCOUNT = "OPEN_ACCOUNT";
+const UPDATE_STREET = "UPDATE_STREET";
 
 function withdraw(){
     return {
@@ -39,8 +44,10 @@ function updateStreet(val){
     }
 }
 
-const initialState = {
+const accountInitialState = {
     amount: 1000,
+}
+const detailsInitialState = {
     details: {
         accTitle: "",
         accNum: null,
@@ -52,7 +59,7 @@ const initialState = {
     }
 }
 
-function reducer(prevState = initialState, action){
+function accountReducer(prevState = accountInitialState, action){
     switch(action.type){
         case WITHDRAW_MONEY:
             return {
@@ -64,6 +71,13 @@ function reducer(prevState = initialState, action){
                 ...prevState,
                 amount: prevState.amount + action.amount
             }
+        default:
+            return prevState
+    }
+}
+
+function detailsReducer(prevState = detailsInitialState, action){
+    switch(action.type){
         case OPEN_ACCOUNT:
             return {
                 ...prevState,
@@ -90,10 +104,14 @@ function reducer(prevState = initialState, action){
     }
 }
 
-const store = createStore(reducer);
+const rootReducer = combineReducers({
+    accountReducer,
+    detailsReducer
+})
+const store = createStore(rootReducer,applyMiddleware(logger));
 console.log("Initial State: ", store.getState())
 const unsubscribe = store.subscribe(()=>{
-    console.log("Updated State: ", store.getState())
+    // console.log("Updated State: ", store.getState())
 })
 
 store.dispatch(withdraw())
